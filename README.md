@@ -12,11 +12,12 @@ linQ backend
 - docker-compose
 - mariadb（←どうしよ？とりあえずはいらないか）
 
-1. 以下のコードでdockerを起動
+1. 以下をプロジェクトルートで実行して起動
 ```
 docker compose up
 ```
 
+2. なんかいろいろ
 - `http://localhost:7777` バックエンドサーバー
 - `mariadb -h 127.0.0.1 -u user -p` mariadb
     - password: `password`
