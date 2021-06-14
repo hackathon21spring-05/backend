@@ -1,4 +1,4 @@
 .vscode
 .DS_Store
 tmp
-mysql
+mysql/data
