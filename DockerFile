@@ -1,6 +1,7 @@
 FROM golang:1.16-alpine
 
-RUN go install github.com/cosmtrek/air@latest
+RUN apk --no-cache add tzdata \
+  && go install github.com/cosmtrek/air@latest
 
 RUN mkdir /app
 WORKDIR /app
