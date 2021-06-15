@@ -5,6 +5,7 @@ services:
       context: .
       dockerfile: DockerFile
     restart: always
+    env_file: .env
     environment:
       DB_USERNAME: user
       DB_PASSWORD: password
