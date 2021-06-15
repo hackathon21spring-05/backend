@@ -17,6 +17,7 @@ func SetRouting(e *echo.Echo, sess sess.Session, cltID string, cltSecret string)
 	clientSecret = cltSecret
 
 	api := e.Group("")
+	api.Use(UserAuthMiddleware)
 
 	apiOAuth := api.Group("/oauth")
 	{
