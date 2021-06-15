@@ -1,7 +1,19 @@
 FROM golang:1.16-alpine
 
-RUN apk --no-cache add tzdata \
-  && go install github.com/cosmtrek/air@latest
+RUN apk --no-cache add tzdata
+
+ENV DOCKERIZE_VERSION v0.6.0
+RUN apk add --no-cache openssl \
+  && wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
+  && tar -C /usr/local/bin -xzvf dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
+  && rm dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+
+RUN go install github.com/cosmtrek/air@latest
 
 RUN mkdir /app
 WORKDIR /app
+
+COPY go.mod go.sum ./
+RUN go mod download
+
+ENTRYPOINT dockerize -timeout 60s -wait tcp://db:3306 air

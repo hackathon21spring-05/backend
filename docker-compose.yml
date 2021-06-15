@@ -13,7 +13,6 @@ services:
       DB_DATABASE: linq
       PORT: 7777
       TZ: Asia/Tokyo
-    command: air
     ports:
       - 7777:7777
     volumes:
