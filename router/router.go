@@ -18,6 +18,7 @@ func SetRouting(e *echo.Echo, sess sess.Session, cltID string, cltSecret string)
 
 	api := e.Group("/api")
 	{
+		api.GET("/ping", pingHandler)
 		apiEntry := api.Group("/entry")
 		{
 			apiEntry.GET("/", GetEntryHandler)
