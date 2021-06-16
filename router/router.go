@@ -17,13 +17,12 @@ func SetRouting(e *echo.Echo, sess sess.Session, cltID string, cltSecret string)
 	clientSecret = cltSecret
 
 	api := e.Group("")
-	api.Use(UserAuthMiddleware)
 
 	apiOAuth := api.Group("/oauth")
 	{
 		apiOAuth.GET("/callback", CallbackHandler)
-		apiOAuth.GET("/generate/code", PostGenerateCodeHandler)
-		apiOAuth.POST("/logout", PostGenerateCodeHandler)
+		apiOAuth.POST("/generate/code", PostGenerateCodeHandler)
+		apiOAuth.POST("/logout", PostGenerateCodeHandler, UserAuthMiddleware)
 	}
 	return nil
 }
