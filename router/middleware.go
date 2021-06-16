@@ -1,11 +1,9 @@
 package router
 
 import (
-	"errors"
 	"fmt"
 	"net/http"
 
-	"github.com/hackathon21spring-05/linq-backend/model"
 	"github.com/labstack/echo-contrib/session"
 	"github.com/labstack/echo/v4"
 )
