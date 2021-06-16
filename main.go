@@ -37,6 +37,7 @@ func main() {
 	e := echo.New()
 	e.Use(session.Middleware(s.Store()))
 	e.Use(middleware.Recover())
+	e.Use(middleware.Logger())
 
 	clientID := os.Getenv("CLIENT_ID")
 	if len(clientID) == 0 {
