@@ -7,15 +7,14 @@ services:
     restart: always
     env_file: .env
     environment:
-      DB_USERNAME: user
-      DB_PASSWORD: password
-      DB_HOSTNAME: db
-      DB_PORT: 3306
-      DB_DATABASE: linq
-      PORT: 7777
+      MARIADB_USERNAME: user
+      MARIADB_PASSWORD: password
+      MARIADB_HOSTNAME: db
+      MARIADB_DATABASE: linq
+      PORT: 3000
       TZ: Asia/Tokyo
     ports:
-      - 7777:7777
+      - 3000:3000
     volumes:
       - .:/app
     security_opt:
