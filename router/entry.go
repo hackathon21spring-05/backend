@@ -1,6 +1,7 @@
 package router
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/hackathon21spring-05/linq-backend/model"
@@ -17,7 +18,7 @@ func GetEntryHandler(c echo.Context) error {
 func PutEntryHandler(c echo.Context) error {
 	req := struct {
 		*model.Entry
-		tags []string
+		Tags []string `json:"tags"`
 	}{}
 
 	err := c.Bind(&req)
@@ -31,7 +32,12 @@ func PutEntryHandler(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 
-	// タグの追加（この機能いる？）
+	// タグの追加
+	fmt.Println(req.Tags)
+	err = model.AddTags(c.Request().Context(), req.Entry.Url, req.Tags)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
 
 	// ブックマークに追加
 	user := model.User{}
@@ -40,7 +46,7 @@ func PutEntryHandler(c echo.Context) error {
 	// 	return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	// }
 
-	// session が使えないのでとりあえず仮に
+	// session が使えないのでとりあえず仮に <TODO>
 	user.ID = "060db77b-1d04-4686-a5ec-15c960159646"
 
 	err = model.AddBookMark(c.Request().Context(), user.ID, req.Entry.Url)

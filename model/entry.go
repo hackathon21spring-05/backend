@@ -23,16 +23,17 @@ func AddEntry(ctx context.Context, entry *Entry) error {
 	// すでに追加されているか確認
 	// urlにuniqueが使えなかったので，とりあえずselect文で取ってくる方針にする
 	var count int
-	err := db.GetContext(ctx, &count, "SELECT COUNT(*) FROM entrys where url=?", entry.Url)
+	entryId := toHash(entry.Url)
+	err := db.GetContext(ctx, &count, "SELECT COUNT(*) FROM entrys where id=?", entryId)
 	if err != nil {
 		return fmt.Errorf("failed to get entry: %w", err)
 	}
 	if count > 0 {
 		return nil
 	}
+	// TODO: URLからデータをとってくる
 
 	// 記事の追加
-	entryId := toHash(entry.Url)
 	_, err = db.Exec("INSERT INTO entrys (id, url, title, caption, thumbnail) VALUES (?, ?, ?, ?, ?)", entryId, entry.Url, entry.Title, entry.Caption, entry.Thumbnail)
 	if err != nil {
 		return fmt.Errorf("failed to insert entry: %w", err)
@@ -42,11 +43,26 @@ func AddEntry(ctx context.Context, entry *Entry) error {
 
 // ブックマークに追加
 func AddBookMark(ctx context.Context, userId string, url string) error {
-	query := "INSERT INTO bookmarks (user_id, entry_id) SELECT ?, ? FROM dual WHERE NOT EXISTS (SELECT * FROM bookmarks WHERE user_id=user_id  and entry_id=entry_id )"
+	query := "INSERT INTO bookmarks (user_id, entry_id) SELECT ?, ? FROM dual WHERE NOT EXISTS (SELECT * FROM bookmarks WHERE user_id=? and entry_id=? )"
 	entryId := toHash(url)
-	_, err := db.ExecContext(ctx, query, userId, entryId)
+	_, err := db.ExecContext(ctx, query, userId, entryId, userId, entryId)
 	if err != nil {
-		return fmt.Errorf("failed to insert user: %w", err)
+		return fmt.Errorf("failed to insert bookmarks: %w", err)
+	}
+	return nil
+}
+
+// タグの追加
+func AddTags(ctx context.Context, url string, tags []string) error {
+	entryId := toHash(url)
+	query := "INSERT INTO tags (tag, entry_id) SELECT ?, ? FROM dual WHERE NOT EXISTS (SELECT * FROM tags WHERE tag=? and entry_id=?)"
+	// Bulk Insertできなかった……助けて！！！
+	for _, tag := range tags {
+		fmt.Println(tag)
+		_, err := db.Exec(query, tag, entryId, tag, entryId)
+		if err != nil {
+			return fmt.Errorf("failed to insert tags: %w", err)
+		}
 	}
 	return nil
 }
