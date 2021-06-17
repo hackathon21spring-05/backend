@@ -20,6 +20,7 @@ func SetRouting(e *echo.Echo, sess sess.Session, cltID string, cltSecret string)
 	{
 		// あとでセッション周りを適用する
 		api.GET("/users/me", GetUsersMeHandler, UserAuthMiddleware)
+		api.GET("/ping", pingHandler)
 		apiEntry := api.Group("/entry")
 		{
 			apiEntry.GET("/", GetEntryHandler)
