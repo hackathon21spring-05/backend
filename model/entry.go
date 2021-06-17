@@ -40,6 +40,17 @@ func AddEntry(ctx context.Context, entry *Entry) error {
 	return nil
 }
 
+// ブックマークに追加
+func AddBookMark(ctx context.Context, userId string, url string) error {
+	query := "INSERT INTO bookmarks (user_id, entry_id) SELECT ?, ? FROM dual WHERE NOT EXISTS (SELECT * FROM bookmarks WHERE user_id=user_id  and entry_id=entry_id )"
+	entryId := toHash(url)
+	_, err := db.ExecContext(ctx, query, userId, entryId)
+	if err != nil {
+		return fmt.Errorf("failed to insert user: %w", err)
+	}
+	return nil
+}
+
 // 文字列をハッシュ256化
 func toHash(password string) string {
 	converted := sha256.Sum256([]byte(password))

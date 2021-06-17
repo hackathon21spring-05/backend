@@ -34,6 +34,19 @@ func PutEntryHandler(c echo.Context) error {
 	// タグの追加（この機能いる？）
 
 	// ブックマークに追加
+	user := model.User{}
+	// user, err = GetMe(c)
+	// if err != nil {
+	// 	return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	// }
+
+	// session が使えないのでとりあえず仮に
+	user.ID = "060db77b-1d04-4686-a5ec-15c960159646"
+
+	err = model.AddBookMark(c.Request().Context(), user.ID, req.Entry.Url)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
 
 	return c.NoContent(http.StatusOK)
 }
