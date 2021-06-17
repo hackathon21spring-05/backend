@@ -1,7 +1,6 @@
 package router
 
 import (
-	"database/sql"
 	"errors"
 	"fmt"
 	"net/http"
@@ -35,7 +34,7 @@ func GetMe(c echo.Context) (*model.User, error) {
 }
 
 func GetBm(c echo.Context) error {
-	
+
 	//getme関数を呼び出してuser情報を取得
 	user, err := GetMe(c)
 	if err != nil {
@@ -47,7 +46,7 @@ func GetBm(c echo.Context) error {
 	if err != nil {
 		return c.NoContent(http.StatusNoContent)
 	}
-	
+
 	//rowsをそのまま返す(これがうまく動作するかが未検証)
 	return c.JSON(http.StatusOK, rows)
 }
