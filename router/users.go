@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/hackathon21spring-05/linq-backend/model"
 	"github.com/labstack/echo/v4"
 )
 
@@ -19,10 +20,18 @@ func GetUsersMeHandler(c echo.Context) error {
 
 //GetUsersMeHandlerのまるこぴ
 func GetUsersBookmarkHandler(c echo.Context) error {
-	Bookmark, err := GetBm(c)
+
+	user, err := GetMe(c)
 	if err != nil {
-		return c.String(http.StatusInternalServerError, fmt.Errorf("failed to get bookmarks: %w", err).Error())
+		return c.String(http.StatusInternalServerError, fmt.Errorf("failed to get me: %w", err).Error())
 	}
 
-	return c.JSON(http.StatusOK, Bookmark)
+	var userbookmarks model.UserBm
+
+	userbookmarks, err = model.GetBookmark(c.Request().Context(), user)
+	if err != nil {
+		return c.String(http.StatusInternalServerError, fmt.Errorf("failed to get bookmark: %w", err).Error())
+	}
+
+	return c.JSON(http.StatusOK, userbookmarks)
 }
