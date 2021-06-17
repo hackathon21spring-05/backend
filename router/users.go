@@ -16,3 +16,13 @@ func GetUsersMeHandler(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, user)
 }
+
+//GetUsersMeHandlerのまるこぴ
+func GetUsersBookmarkHandler(c echo.Context) error {
+	Bookmark, err := GetBm(c)
+	if err != nil {
+		return c.String(http.StatusInternalServerError, fmt.Errorf("failed to get bookmarks: %w", err).Error())
+	}
+
+	return c.JSON(http.StatusOK, Bookmark)
+}
