@@ -1,5 +1,6 @@
 type: runtime
-
+cname:
+  - linq-test.trap.games
 startup: |
   mv /etc/pacman.conf /etc/pacman.conf.old
   head -n -3 /etc/pacman.conf.old > /etc/pacman.conf
@@ -13,11 +14,9 @@ entrypoint: ./main
 
 http_proxy: 3000
 
-https: on
+https: "hard"
 
 use_mariadb: true
-
-internal: hard
 
 branch:
   main:
