@@ -27,7 +27,7 @@ func SetRouting(e *echo.Echo, sess sess.Session, cltID string, cltSecret string)
 		{
 			apiEntry.GET("", GetEntryHandler)
 			apiEntry.PUT("", PutEntryHandler)
-			apiEntry.POST("/entry/:entryId/tag/:tag", PostEntryHandler)
+			apiEntry.POST("/entry/:entryId/tag/:tag", PostEntryTagHandler)
 		}
 		apiOAuth := api.Group("/oauth")
 		{
