@@ -18,23 +18,17 @@ func GetUsersMeHandler(c echo.Context) error {
 	return c.JSON(http.StatusOK, user)
 }
 
-//GetUsersMeHandlerのまるこぴ
+// GetUsersBookmarkHandler ブックマーク一覧を返す
 func GetUsersBookmarkHandler(c echo.Context) error {
-
-	// user, err := GetMe(c)
-	// if err != nil {
-	// 	return c.String(http.StatusInternalServerError, fmt.Errorf("failed to get me: %w", err).Error())
-	// }
-	var err error
-	user := model.User{}
-	user.ID = "ts117"
-
-	var userbookmarks model.UserBm
-
-	userbookmarks, err = model.GetBookmark(c.Request().Context(), &user)
+	user, err := GetMe(c)
 	if err != nil {
-		return c.String(http.StatusInternalServerError, fmt.Errorf("failed to get bookmark: %w", err).Error())
+		return c.String(http.StatusInternalServerError, fmt.Errorf("failed to get me: %w", err).Error())
 	}
 
-	return c.JSON(http.StatusOK, userbookmarks)
+	bookmarks, err := model.GetBookmarks(c.Request().Context(), user.ID)
+	if err != nil {
+		return c.String(http.StatusInternalServerError, fmt.Errorf("failed to get bookmarks: %w", err).Error())
+	}
+
+	return c.JSON(http.StatusOK, bookmarks)
 }
