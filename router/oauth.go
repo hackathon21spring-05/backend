@@ -82,7 +82,7 @@ func CallbackHandler(c echo.Context) error {
 		return c.String(http.StatusInternalServerError, fmt.Errorf("failed to save session: %w", err).Error())
 	}
 
-	return c.NoContent(http.StatusOK)
+	return c.Redirect(http.StatusFound, "/")
 }
 
 // PostLogoutHandler POST /oauth/logoutのハンドラー
