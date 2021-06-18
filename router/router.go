@@ -16,6 +16,8 @@ func SetRouting(e *echo.Echo, sess sess.Session, cltID string, cltSecret string)
 	clientID = cltID
 	clientSecret = cltSecret
 
+	e.Static("/openapi", "docs/swagger")
+
 	api := e.Group("/api")
 	{
 		// あとでセッション周りを適用する
