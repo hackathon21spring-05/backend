@@ -25,6 +25,10 @@ type EntryDetail struct {
 	IsBookmark bool     `json:"isBookmark"`
 }
 
+type numEntrys struct {
+	Num int `json:"num"`
+}
+
 // getEntryDetail 特定の記事詳細を取得する
 func GetEntryDetail(ctx context.Context, userId string, entryId string) (EntryDetail, error) {
 	// 記事の本体情報を取得
@@ -107,6 +111,24 @@ func AddTags(ctx context.Context, entryId string, tags []string) error {
 		}
 	}
 	return nil
+}
+
+func FindEntry(ctx context.Context, entryId string) (numEntrys, error) {
+	query := "SELECT count(id) FROM entrys WHERE entryId=?"
+	rows, err := db.Exec(query, entryId)
+	if err != nil {
+		return numEntrys{}, fmt.Errorf("failed to get data: %w", err)
+	}
+
+	var numentrys numEntrys
+
+	for rows.Next() {
+		if err := rows.Scan(&numentrys); err != nil {
+			return numentrys, fmt.Errorf("fatal error: %w", err)
+		}
+	}
+
+	return numentrys, err
 }
 
 // 文字列をハッシュ256化

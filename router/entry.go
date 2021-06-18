@@ -67,10 +67,18 @@ func PostEntryHandler(c echo.Context) error {
 	entryId := c.Param("entryId")
 	var tag = []string{c.Param("tag")}
 
-	err := model.AddTags(c.Request().Context(), entryId, tag)
+	numentrys, err := model.FindEntry(c.Request().Context(), entryId)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+	if numentrys.Num == 0 {
+		return echo.NewHTTPError(http.StatusNotFound, err.Error())
+	}
+
+	err = model.AddTags(c.Request().Context(), entryId, tag)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 
-	return c.JSON(http.StatusOK, err)
+	return c.JSON(http.StatusCreated, err)
 }
