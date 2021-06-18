@@ -113,14 +113,26 @@ func AddTags(ctx context.Context, entryId string, tags []string) error {
 	return nil
 }
 
-func FindEntry(ctx context.Context, entryId string) (numentrys int, err error) {
+// タグの削除
+func DeleteTags(ctx context.Context, entryId string, tags []string) error {
+	query := "DELETE FROM tags WHERE tag=? and entry_id=?"
+	for _, tag := range tags {
+		_, err := db.Exec(query, tag, entryId)
+		if err != nil {
+			return fmt.Errorf("failed to delete tags: %w", err)
+		}
+	}
+	return nil
+}
 
-	err = db.GetContext(ctx, &numentrys, "SELECT count(*) FROM entrys WHERE entryId=?", entryId)
+func FindEntry(ctx context.Context, entryId string) (int, error) {
+	var numEntrys int
+	err := db.GetContext(ctx, &numEntrys, "SELECT count(*) FROM entrys WHERE id=?", entryId)
 	if err != nil {
 		return -1, fmt.Errorf("failed to get entry: %w", err)
 	}
 
-	return numentrys, err
+	return numEntrys, err
 }
 
 // 文字列をハッシュ256化
