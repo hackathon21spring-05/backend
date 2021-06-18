@@ -127,7 +127,7 @@ func DeleteTags(ctx context.Context, entryId string, tags []string) error {
 
 func FindEntry(ctx context.Context, entryId string) (numentrys int, err error) {
 
-	err = db.GetContext(ctx, &numentrys, "SELECT count(*) FROM entrys WHERE entryId=?", entryId)
+	err = db.GetContext(ctx, &numentrys, "SELECT count(*) FROM entrys WHERE id=?", entryId)
 	if err != nil {
 		return -1, fmt.Errorf("failed to get entry: %w", err)
 	}
