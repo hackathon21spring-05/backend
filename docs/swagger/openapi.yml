@@ -129,9 +129,13 @@ paths:
       responses:
         "200":
           description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EntryDetail'
         "500":
           description: サーバー内エラー
-  /entry/{entryId}/{tag}:
+  /entry/{entryId}/tag/{tag}:
     post:
       tags:
         - entry
@@ -154,13 +158,15 @@ paths:
       responses:
         "201":
           description: created
+        "404":
+          description: Not Found（entryIdが存在しない場合）
         "500":
           description: サーバー内エラー
     delete:
       tags:
         - entry
       summary: tagを削除する
-      description: タグを削除する
+      description: タグを削除する．タグが存在しなかった場合204を返します
       operationId: deleteTags
       parameters:
       - name: "entryId"
@@ -177,7 +183,9 @@ paths:
         required: true
       responses:
         "204":
-          description: 	No Content 
+          description: 	No Content 削除
+        "404":
+          description: Not Found（entryIdが存在しない場合）
         "500":
           description: サーバー内エラー
   /entry/{entryId}:
@@ -201,8 +209,32 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/EntryDetail"
+        "404":
+          description: Not Found（entryIdが存在しない場合）
         "500":
           description: サーバー内エラー
+  /entry/{entryId}/bookmark:
+    delete:
+      tags:
+        - entry
+      summary: ブックマークの削除
+      description: ブックマークの削除
+      operationId: deleteBookmark
+      parameters:
+      - name: "entryId"
+        in: "path"
+        description: "記事のId (urlのsha256ハッシュ)"
+        schema:
+          type: string
+        required: true
+      responses:
+        "204":
+          description: No Content 削除
+        "404":
+          description: Not Found（entryIdが存在しない場合）
+        "500":
+          description: サーバー内エラー
+      
   /search:
     get:
       tags:
