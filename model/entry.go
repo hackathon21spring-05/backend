@@ -114,18 +114,12 @@ func AddTags(ctx context.Context, entryId string, tags []string) error {
 }
 
 func FindEntry(ctx context.Context, entryId string) (numEntrys, error) {
-	query := "SELECT count(id) FROM entrys WHERE entryId=?"
-	rows, err := db.Exec(query, entryId)
-	if err != nil {
-		return numEntrys{}, fmt.Errorf("failed to get data: %w", err)
-	}
 
 	var numentrys numEntrys
 
-	for rows.Next() {
-		if err := rows.Scan(&numentrys); err != nil {
-			return numentrys, fmt.Errorf("fatal error: %w", err)
-		}
+	err := db.GetContext(ctx, &numentrys.Num, "SELECT count(*) FROM entrys WHERE entryId=?", entryId)
+	if err != nil {
+		return numEntrys{}, fmt.Errorf("failed to get entry: %w", err)
 	}
 
 	return numentrys, err
