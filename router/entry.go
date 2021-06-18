@@ -7,9 +7,22 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+// Get GetEntryHandler新着を50件表示
 func GetEntryHandler(c echo.Context) error {
-	// TODO
-	return c.NoContent(http.StatusOK)
+	user := model.User{}
+	// user, err = GetMe(c)
+	// if err != nil {
+	// 	return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	// }
+
+	// session が使えないのでとりあえず仮に <TODO>
+	user.ID = "060db77b-1d04-4686-a5ec-15c960159646"
+
+	entryDetails, err := model.GetNewEntrys(c.Request().Context(), user.ID)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+	return c.JSON(http.StatusOK, entryDetails)
 }
 
 // PUT /entry ブックマークの追加・タグの更新・記事がなければ追加

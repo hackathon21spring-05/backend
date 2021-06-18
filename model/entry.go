@@ -25,10 +25,6 @@ type EntryDetail struct {
 	IsBookmark bool     `json:"isBookmark"`
 }
 
-// type numEntrys struct {
-// 	Num int `json:"num"`
-// }
-
 // getEntryDetail 特定の記事詳細を取得する
 func GetEntryDetail(ctx context.Context, userId string, entryId string) (EntryDetail, error) {
 	// 記事の本体情報を取得
@@ -61,6 +57,45 @@ func GetEntryDetail(ctx context.Context, userId string, entryId string) (EntryDe
 		Tags:       tags,
 		IsBookmark: isBookmark,
 	}, nil
+}
+
+// 新着記事を50件取得
+func GetNewEntrys(ctx context.Context, userId string) ([]EntryDetail, error) {
+	// 2N+1を後で解決する！！！！！！TODO
+	var entrys []Entry
+	err := db.SelectContext(ctx, &entrys, "SELECT * FROM entrys ORDER BY created_at DESC LIMIT 50")
+	if err != nil {
+		return []EntryDetail{}, fmt.Errorf("failed to get entry: %w", err)
+	}
+
+	// ここから完全にアウトじゃん
+	entryDetails := make([]EntryDetail, len(entrys))
+	for i, entry := range entrys {
+		var tags []string
+		err = db.SelectContext(ctx, &tags, "SELECT tag FROM tags WHERE entry_id=? ORDER BY tag", entry.ID)
+		if err != nil {
+			return []EntryDetail{}, fmt.Errorf("failed to get entry: %w", err)
+		}
+		var count int
+		err = db.GetContext(ctx, &count, "SELECT COUNT(*) FROM bookmarks WHERE user_id=? and entry_id=?", userId, entry.ID)
+		if err != nil {
+			return []EntryDetail{}, fmt.Errorf("failed to get entry: %w", err)
+		}
+		isBookmark := false
+		if count > 0 {
+			isBookmark = true
+		}
+		entryDetails[i].ID = entry.ID
+		entryDetails[i].Url = entry.Url
+		entryDetails[i].Title = entry.Title
+		entryDetails[i].Caption = entry.Caption
+		entryDetails[i].Thumbnail = entry.Thumbnail
+		entryDetails[i].CreatedAt = entry.CreatedAt
+
+		entryDetails[i].Tags = tags
+		entryDetails[i].IsBookmark = isBookmark
+	}
+	return entryDetails, nil
 }
 
 // AddEntry 記事が存在しなければ記事を追加する
