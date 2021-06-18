@@ -76,18 +76,39 @@ func GetEntryDetailHandler(c echo.Context) error {
 
 	entryId := c.Param("entryId")
 
-	numentrys, err := model.FindEntry(c.Request().Context(), entryId)
+	numEntrys, err := model.FindEntry(c.Request().Context(), entryId)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
-	if numentrys.Num == 0 {
+	if numEntrys == 0 {
 		return echo.NewHTTPError(http.StatusNotFound, err.Error())
 	}
 
-	entrydetail, err := model.GetEntryDetail(c.Request().Context(), user.ID, entryId)
+	entryDetail, err := model.GetEntryDetail(c.Request().Context(), user.ID, entryId)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 
-	return c.JSON(http.StatusOK, entrydetail)
+	return c.JSON(http.StatusOK, entryDetail)
+}
+
+func PostEntryTagHandler(c echo.Context) error {
+
+	entryId := c.Param("entryId")
+	var tag = []string{c.Param("tag")}
+
+	numEntrys, err := model.FindEntry(c.Request().Context(), entryId)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+	if numEntrys == 0 {
+		return echo.NewHTTPError(http.StatusNotFound, err.Error())
+	}
+
+	err = model.AddTags(c.Request().Context(), entryId, tag)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+
+	return c.NoContent(http.StatusCreated)
 }
