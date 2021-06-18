@@ -61,6 +61,7 @@ func SetRouting(e *echo.Echo, sess sess.Session, cltID string, cltSecret string)
 			apiEntry.GET("", GetEntryHandler)
 			apiEntry.PUT("", PutEntryHandler)
 			apiEntry.POST("/entry/:entryId/tag/:tag", PostEntryTagHandler)
+			apiEntry.DELETE("/entry/:entryId/tag/:tag", DeleteEntryTagHandler)
 			apiEntry.GET("/entry/:entryId", GetEntryDetailHandler)
 		}
 		apiOAuth := api.Group("/oauth")

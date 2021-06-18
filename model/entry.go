@@ -113,6 +113,18 @@ func AddTags(ctx context.Context, entryId string, tags []string) error {
 	return nil
 }
 
+// タグの削除
+func DeleteTags(ctx context.Context, entryId string, tags []string) error {
+	query := "DELETE FROM tags WHERE tag=? and entry_id=?)"
+	for _, tag := range tags {
+		_, err := db.Exec(query, tag, entryId)
+		if err != nil {
+			return fmt.Errorf("failed to delete tags: %w", err)
+		}
+	}
+	return nil
+}
+
 func FindEntry(ctx context.Context, entryId string) (numentrys int, err error) {
 
 	err = db.GetContext(ctx, &numentrys, "SELECT count(*) FROM entrys WHERE entryId=?", entryId)
