@@ -80,5 +80,5 @@ func PostEntryTagHandler(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 
-	return c.JSON(http.StatusCreated, err)
+	return c.NoContent(http.StatusCreated)
 }
