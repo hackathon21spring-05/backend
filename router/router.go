@@ -23,8 +23,8 @@ func SetRouting(e *echo.Echo, sess sess.Session, cltID string, cltSecret string)
 		api.GET("/ping", pingHandler)
 		apiEntry := api.Group("/entry")
 		{
-			apiEntry.GET("/", GetEntryHandler)
-			apiEntry.PUT("/", PutEntryHandler)
+			apiEntry.GET("", GetEntryHandler)
+			apiEntry.PUT("", PutEntryHandler)
 		}
 		apiOAuth := api.Group("/oauth")
 		{

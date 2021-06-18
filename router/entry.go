@@ -1,7 +1,6 @@
 package router
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/hackathon21spring-05/linq-backend/model"
@@ -25,6 +24,7 @@ func PutEntryHandler(c echo.Context) error {
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
+	entryId := model.ToHash(req.Entry.Url)
 
 	// 記事がなければ追加
 	err = model.AddEntry(c.Request().Context(), req.Entry)
@@ -33,8 +33,7 @@ func PutEntryHandler(c echo.Context) error {
 	}
 
 	// タグの追加
-	fmt.Println(req.Tags)
-	err = model.AddTags(c.Request().Context(), req.Entry.Url, req.Tags)
+	err = model.AddTags(c.Request().Context(), entryId, req.Tags)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
@@ -49,10 +48,16 @@ func PutEntryHandler(c echo.Context) error {
 	// session が使えないのでとりあえず仮に <TODO>
 	user.ID = "060db77b-1d04-4686-a5ec-15c960159646"
 
-	err = model.AddBookMark(c.Request().Context(), user.ID, req.Entry.Url)
+	err = model.AddBookMark(c.Request().Context(), user.ID, entryId)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 
-	return c.NoContent(http.StatusOK)
+	// 記事情報を取得
+	var entryDetail model.EntryDetail
+	entryDetail, err = model.GetEntryDetail(c.Request().Context(), user.ID, entryId)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+	return c.JSON(http.StatusCreated, entryDetail)
 }
