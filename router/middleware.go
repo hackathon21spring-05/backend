@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/hackathon21spring-05/linq-backend/model"
 	"github.com/labstack/echo-contrib/session"
@@ -12,6 +13,12 @@ import (
 
 // GetMe 本番用のGetMe
 func GetMe(c echo.Context) (*model.User, error) {
+	// OAuthのない開発環境では次の値をテストに用いる（後で消すと良いかも）
+	env := os.Getenv("ENV")
+	if env == "develop" {
+		return &model.User{ID: "060db77b-1d04-4686-a5ec-15c960159646", Name: "toshi00"}, nil
+	}
+
 	sess, err := session.Get("sessions", c)
 	if err != nil {
 		return nil, fmt.Errorf("Failed In Getting Session:%w", err)

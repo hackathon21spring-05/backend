@@ -13,6 +13,7 @@ services:
       MARIADB_DATABASE: linq
       PORT: 3000
       TZ: Asia/Tokyo
+      ENV: develop
     ports:
       - 3000:3000
     volumes:

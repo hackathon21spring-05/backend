@@ -9,14 +9,10 @@ import (
 
 // Get GetEntryHandler新着を50件表示
 func GetEntryHandler(c echo.Context) error {
-	user := model.User{}
-	// user, err = GetMe(c)
-	// if err != nil {
-	// 	return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
-	// }
-
-	// session が使えないのでとりあえず仮に <TODO>
-	user.ID = "060db77b-1d04-4686-a5ec-15c960159646"
+	user, err := GetMe(c)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
 
 	entryDetails, err := model.GetNewEntrys(c.Request().Context(), user.ID)
 	if err != nil {
@@ -52,14 +48,10 @@ func PutEntryHandler(c echo.Context) error {
 	}
 
 	// ブックマークに追加
-	user := model.User{}
-	// user, err = GetMe(c)
-	// if err != nil {
-	// 	return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
-	// }
-
-	// session が使えないのでとりあえず仮に <TODO>
-	user.ID = "060db77b-1d04-4686-a5ec-15c960159646"
+	user, err := GetMe(c)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
 
 	err = model.AddBookMark(c.Request().Context(), user.ID, entryId)
 	if err != nil {
@@ -78,14 +70,10 @@ func PutEntryHandler(c echo.Context) error {
 func GetEntryDetailHandler(c echo.Context) error {
 
 	// ブックマークに追加
-	user := model.User{}
-	//user, err = GetMe(c)
-	// if err != nil {
-	// 	return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
-	// }
-
-	// session が使えないのでとりあえず仮に <TODO>
-	user.ID = "060db77b-1d04-4686-a5ec-15c960159646"
+	user, err := GetMe(c)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
 
 	entryId := c.Param("entryId")
 
