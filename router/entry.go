@@ -61,3 +61,16 @@ func PutEntryHandler(c echo.Context) error {
 	}
 	return c.JSON(http.StatusCreated, entryDetail)
 }
+
+func PostEntryHandler(c echo.Context) error {
+
+	entryId := c.Param("entryId")
+	var tag = []string{c.Param("tag")}
+
+	err := model.AddTags(c.Request().Context(), entryId, tag)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+
+	return c.JSON(http.StatusOK, err)
+}
