@@ -72,10 +72,14 @@ func AddEntry(ctx context.Context, entry *Entry) error {
 	if count > 0 {
 		return nil
 	}
-	// TODO: URLからデータをとってくる
+	// URLからデータをとってくる
+	entryData, err := getEntryContent(entry.Url)
+	if err != nil {
+		return fmt.Errorf("failed to get entry Data: %w", err)
+	}
 
 	// 記事の追加
-	_, err = db.Exec("INSERT INTO entrys (id, url, title, caption, thumbnail) VALUES (?, ?, ?, ?, ?)", entryId, entry.Url, entry.Title, entry.Caption, entry.Thumbnail)
+	_, err = db.Exec("INSERT INTO entrys (id, url, title, caption, thumbnail) VALUES (?, ?, ?, ?, ?)", entryId, entry.Url, entryData.Title, entryData.Caption, entryData.Thumbnail)
 	if err != nil {
 		return fmt.Errorf("failed to insert entry: %w", err)
 	}
