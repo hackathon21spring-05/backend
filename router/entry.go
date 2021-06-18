@@ -93,9 +93,8 @@ func GetEntryDetailHandler(c echo.Context) error {
 }
 
 func PostEntryTagHandler(c echo.Context) error {
-
 	entryId := c.Param("entryId")
-	var tag = []string{c.Param("tag")}
+	tag := []string{c.Param("tag")}
 
 	numEntrys, err := model.FindEntry(c.Request().Context(), entryId)
 	if err != nil {
@@ -116,7 +115,7 @@ func PostEntryTagHandler(c echo.Context) error {
 func DeleteEntryTagHandler(c echo.Context) error {
 
 	entryId := c.Param("entryId")
-	var tag = []string{c.Param("tag")}
+	tag := []string{c.Param("tag")}
 
 	numEntrys, err := model.FindEntry(c.Request().Context(), entryId)
 	if err != nil {
