@@ -71,7 +71,7 @@ func PostEntryTagHandler(c echo.Context) error {
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
-	if numentrys.Num == 0 {
+	if numentrys == 0 {
 		return echo.NewHTTPError(http.StatusNotFound, err.Error())
 	}
 

@@ -25,9 +25,9 @@ type EntryDetail struct {
 	IsBookmark bool     `json:"isBookmark"`
 }
 
-type numEntrys struct {
-	Num int `json:"num"`
-}
+// type numEntrys struct {
+// 	Num int `json:"num"`
+// }
 
 // getEntryDetail 特定の記事詳細を取得する
 func GetEntryDetail(ctx context.Context, userId string, entryId string) (EntryDetail, error) {
@@ -113,13 +113,11 @@ func AddTags(ctx context.Context, entryId string, tags []string) error {
 	return nil
 }
 
-func FindEntry(ctx context.Context, entryId string) (numEntrys, error) {
+func FindEntry(ctx context.Context, entryId string) (numentrys int, err error) {
 
-	var numentrys numEntrys
-
-	err := db.GetContext(ctx, &numentrys.Num, "SELECT count(*) FROM entrys WHERE entryId=?", entryId)
+	err = db.GetContext(ctx, &numentrys, "SELECT count(*) FROM entrys WHERE entryId=?", entryId)
 	if err != nil {
-		return numEntrys{}, fmt.Errorf("failed to get entry: %w", err)
+		return -1, fmt.Errorf("failed to get entry: %w", err)
 	}
 
 	return numentrys, err
