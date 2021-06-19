@@ -11,11 +11,11 @@ services:
       MARIADB_PASSWORD: password
       MARIADB_HOSTNAME: db
       MARIADB_DATABASE: linq
-      PORT: 3000
+      PORT: 3001
       TZ: Asia/Tokyo
       ENV: develop
     ports:
-      - 3000:3000
+      - 3001:3001
     volumes:
       - .:/app
     security_opt:
