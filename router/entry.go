@@ -112,15 +112,7 @@ func DeleteEntryTagHandler(c echo.Context) error {
 	entryId := c.Param("entryId")
 	tag := []string{c.Param("tag")}
 
-	numEntrys, err := model.FindEntry(c.Request().Context(), entryId)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
-	}
-	if numEntrys == 0 {
-		return echo.NewHTTPError(http.StatusNotFound, err.Error())
-	}
-
-	err = model.DeleteTags(c.Request().Context(), entryId, tag)
+	err := model.DeleteTags(c.Request().Context(), entryId, tag)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
