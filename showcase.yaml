@@ -1,6 +1,7 @@
 type: runtime
 cname:
   - linq-test.trap.games
+  - linq.trap.games
 startup: |
   go mod download
   go build -o main
