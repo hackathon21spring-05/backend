@@ -44,8 +44,13 @@ func SetRouting(e *echo.Echo, sess sess.Session, cltID string, cltSecret string)
 		return nil
 	}
 	proxyConfig.Rewrite = map[string]string{
-		"/assets/*": "/assets/$1",
-		"/*":        "/",
+		"/entry*":    "/",
+		"/search*":   "/",
+		"/add":       "/",
+		"/bookmark":  "/",
+		"/callback*": "/",
+		"/assets/*":  "/assets/$1",
+		"/*":         "/",
 	}
 
 	e.Use(middleware.ProxyWithConfig(proxyConfig))
