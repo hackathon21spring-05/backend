@@ -139,14 +139,6 @@ func DeleteUsersBookmarkHandler(c echo.Context) error {
 	entryId := c.Param("entryId")
 	user, err := GetMe(c)
 
-	numEntrys, err := model.FindEntry(c.Request().Context(), entryId)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
-	}
-	if numEntrys == 0 {
-		return echo.NewHTTPError(http.StatusNotFound, err.Error())
-	}
-
 	err = model.DeleteBookmark(c.Request().Context(), entryId, user.ID)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
