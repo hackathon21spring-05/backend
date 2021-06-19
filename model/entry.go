@@ -160,6 +160,16 @@ func DeleteTags(ctx context.Context, entryId string, tags []string) error {
 	return nil
 }
 
+// Bookmarkの削除
+func DeleteBookmark(ctx context.Context, entryId string, userId string) error {
+	query := "DELETE FROM bookmarks WHERE entry_id=? and user_id=?"
+	_, err := db.Exec(query, entryId, userId)
+	if err != nil {
+		return fmt.Errorf("failed to delete tags: %w", err)
+	}
+	return nil
+}
+
 func FindEntry(ctx context.Context, entryId string) (int, error) {
 	var numEntrys int
 	err := db.GetContext(ctx, &numEntrys, "SELECT count(*) FROM entrys WHERE id=?", entryId)
