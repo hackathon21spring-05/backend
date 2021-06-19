@@ -76,17 +76,11 @@ func GetEntryDetailHandler(c echo.Context) error {
 	}
 
 	entryId := c.Param("entryId")
-
-	numEntrys, err := model.FindEntry(c.Request().Context(), entryId)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
-	}
-	if numEntrys == 0 {
-		return echo.NewHTTPError(http.StatusNotFound, err.Error())
-	}
-
 	entryDetail, err := model.GetEntryDetail(c.Request().Context(), user.ID, entryId)
 	if err != nil {
+		if err.Error() == "failed to get entry: sql: no rows in result set" {
+			return echo.NewHTTPError(http.StatusNotFound, err.Error())
+		}
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 
