@@ -53,12 +53,13 @@ func SetRouting(e *echo.Echo, sess sess.Session, cltID string, cltSecret string)
 
 	api := e.Group("/api")
 	{
-		// あとでセッション周りを適用する
 		api.GET("/users/me", GetUsersMeHandler, UserAuthMiddleware)
-		api.GET("/users/bookmark", GetUsersBookmarkHandler)
+		api.GET("/users/bookmark", GetUsersBookmarkHandler, UserAuthMiddleware)
 		api.GET("/ping", pingHandler)
-		api.GET("/search", GetSearchEntrys)
+		api.GET("/search", GetSearchEntrys, UserAuthMiddleware)
+
 		apiEntry := api.Group("/entry")
+		apiEntry.Use(UserAuthMiddleware)
 		{
 			apiEntry.GET("", GetEntryHandler)
 			apiEntry.PUT("", PutEntryHandler)

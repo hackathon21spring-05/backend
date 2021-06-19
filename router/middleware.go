@@ -42,6 +42,13 @@ func GetMe(c echo.Context) (*model.User, error) {
 
 // UserAuthMiddleware 本番用のAPIにアクセスしたユーザーを認証するミドルウェア
 func UserAuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
+	// OAuthのない開発環境では次の値をテストに用いる（後で消すと良いかも）
+	env := os.Getenv("ENV")
+	if env == "develop" {
+		return func(c echo.Context) error {
+			return next(c)
+		}
+	}
 	return func(c echo.Context) error {
 		sess, err := session.Get("sessions", c)
 		if err != nil {
