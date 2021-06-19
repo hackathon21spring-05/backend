@@ -127,3 +127,16 @@ func DeleteEntryTagHandler(c echo.Context) error {
 
 	return c.NoContent(http.StatusNoContent)
 }
+
+func DeleteUsersBookmarkHandler(c echo.Context) error {
+
+	entryId := c.Param("entryId")
+	user, err := GetMe(c)
+
+	err = model.DeleteBookmark(c.Request().Context(), entryId, user.ID)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+
+	return c.NoContent(http.StatusNoContent)
+}
