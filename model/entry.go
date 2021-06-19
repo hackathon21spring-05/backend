@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
+	"net/url"
 	"time"
 )
 
@@ -103,8 +104,20 @@ func AddEntry(ctx context.Context, entry *Entry) error {
 	// すでに追加されているか確認
 	// urlにuniqueが使えなかったので，とりあえずselect文で取ってくる方針にする
 	var count int
+	u, err := url.Parse(entry.Url)
+	if err != nil {
+		return fmt.Errorf("failed to parse url: %w", err)
+	}
+	removedUrl := u.Scheme + "://" + u.Host + u.Path
+	if u.RawQuery != "" {
+		removedUrl += "?" + u.RawQuery
+	}
+	entry.Url, err = url.QueryUnescape(removedUrl)
+	if err != nil {
+		return fmt.Errorf("failed to decode url: %w", err)
+	}
 	entryId := ToHash(entry.Url)
-	err := db.GetContext(ctx, &count, "SELECT COUNT(*) FROM entrys where id=?", entryId)
+	err = db.GetContext(ctx, &count, "SELECT COUNT(*) FROM entrys where id=?", entryId)
 	if err != nil {
 		return fmt.Errorf("failed to get entry: %w", err)
 	}
