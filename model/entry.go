@@ -30,11 +30,6 @@ type TagSearchRequestBody struct {
 	Tag string `db:"tag" json:"tag"`
 }
 
-// TagSearchResponse タグ検索時の返答となる情報
-type TagSearchResponse struct {
-	Entrys []EntryDetail `db:"entrys" json:"entrys"`
-}
-
 // getEntryDetail 特定の記事詳細を取得する
 func GetEntryDetail(ctx context.Context, userId string, entryId string) (EntryDetail, error) {
 	// 記事の本体情報を取得
