@@ -50,7 +50,7 @@ func SetRouting(e *echo.Echo, sess sess.Session, cltID string, cltSecret string)
 		"/bookmark":  "/",
 		"/callback*": "/",
 		"/assets/*":  "/assets/$1",
-		"/*":         "/$1",
+		"/*":         "/",
 	}
 
 	e.Use(middleware.ProxyWithConfig(proxyConfig))
