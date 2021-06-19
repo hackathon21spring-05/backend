@@ -3,7 +3,6 @@ package router
 import (
 	"net/http"
 	"net/url"
-	"regexp"
 	"strings"
 
 	sess "github.com/hackathon21spring-05/linq-backend/session"
@@ -44,8 +43,9 @@ func SetRouting(e *echo.Echo, sess sess.Session, cltID string, cltSecret string)
 		res.Header.Set("Cache-Control", "max-age=3600")
 		return nil
 	}
-	proxyConfig.RegexRewrite = map[*regexp.Regexp]string{
-		regexp.MustCompile("^(?!/assets/).*"): "/",
+	proxyConfig.Rewrite = map[string]string{
+		"/assets/*": "/assets/$1",
+		"/*":        "/",
 	}
 
 	e.Use(middleware.ProxyWithConfig(proxyConfig))
