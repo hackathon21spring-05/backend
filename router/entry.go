@@ -112,3 +112,36 @@ func PostEntryTagHandler(c echo.Context) error {
 
 	return c.NoContent(http.StatusCreated)
 }
+
+func GetTagSearchHandler(c echo.Context) error {
+	req := model.TagSearchRequestBody{}
+	c.Bind(&req)
+
+	entryIds, err := model.TagSearch(c.Request().Context(), req.Tag)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+
+	var tagsearchresponse []model.EntryDetail
+	var temporarydata model.EntryDetail
+
+	// ブックマークに追加
+	user := model.User{}
+	//user, err = GetMe(c)
+	// if err != nil {
+	// 	return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	// }
+
+	// session が使えないのでとりあえず仮に <TODO>
+	user.ID = "060db77b-1d04-4686-a5ec-15c960159646"
+
+	for index := range entryIds {
+		temporarydata, err = model.GetEntryDetail(c.Request().Context(), user.ID, entryIds[index])
+		if err != nil {
+			return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+		}
+		tagsearchresponse = append(tagsearchresponse, temporarydata)
+	}
+
+	return c.JSON(http.StatusOK, tagsearchresponse)
+}

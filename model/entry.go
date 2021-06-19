@@ -25,9 +25,15 @@ type EntryDetail struct {
 	IsBookmark bool     `json:"isBookmark"`
 }
 
-// type numEntrys struct {
-// 	Num int `json:"num"`
-// }
+// TagSearchRequestBody タグ検索時に渡された情報を格納
+type TagSearchRequestBody struct {
+	Tag string `db:"tag" json:"tag"`
+}
+
+// TagSearchResponse タグ検索時の返答となる情報
+type TagSearchResponse struct {
+	Entrys []EntryDetail `db:"entrys" json:"entrys"`
+}
 
 // getEntryDetail 特定の記事詳細を取得する
 func GetEntryDetail(ctx context.Context, userId string, entryId string) (EntryDetail, error) {
@@ -121,6 +127,16 @@ func FindEntry(ctx context.Context, entryId string) (numentrys int, err error) {
 	}
 
 	return numentrys, err
+}
+
+func TagSearch(ctx context.Context, tag string) (entryIds []string, err error) {
+
+	err = db.GetContext(ctx, &entryIds, "SELECT entry_id FROM tags WHERE tag=? ORDER BY created_at DESC", tag)
+	if err != nil {
+		return entryIds, fmt.Errorf("failed to get entryIds: %w", err)
+	}
+
+	return entryIds, err
 }
 
 // 文字列をハッシュ256化
