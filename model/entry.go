@@ -65,7 +65,7 @@ func GetEntryDetail(ctx context.Context, userId string, entryId string) (EntryDe
 func GetNewEntrys(ctx context.Context, userId string) ([]EntryDetail, error) {
 	// 2N+1を後で解決する！！！！！！TODO
 	var entrys []Entry
-	err := db.SelectContext(ctx, &entrys, "SELECT entrys.* , COUNT(bookmarks.entry_id) AS number FROM entrys JOIN bookmarks ON entrys.id=bookmarks.entry_id GROUP BY bookmarks.entry_id ORDER BY entrys.created_at DESC LIMIT 50")
+	err := db.SelectContext(ctx, &entrys, "SELECT entrys.* , COUNT(bookmarks.entry_id) AS number FROM entrys LEFT OUTER JOIN bookmarks ON entrys.id=bookmarks.entry_id GROUP BY bookmarks.entry_id ORDER BY entrys.created_at DESC LIMIT 50")
 	if err != nil {
 		return []EntryDetail{}, fmt.Errorf("failed to get entry: %w", err)
 	}
