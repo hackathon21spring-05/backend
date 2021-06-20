@@ -64,7 +64,7 @@ func SetRouting(e *echo.Echo, sess sess.Session, cltID string, cltSecret string)
 		api.GET("/users/bookmark", GetUsersBookmarkHandler, UserAuthMiddleware)
 		api.GET("/ping", pingHandler)
 		api.GET("/search", GetSearchEntrys, UserAuthMiddleware)
-
+		api.GET("/hot", GetHotEntryHandler, UserAuthMiddleware)
 		apiEntry := api.Group("/entry")
 		apiEntry.Use(UserAuthMiddleware)
 		{

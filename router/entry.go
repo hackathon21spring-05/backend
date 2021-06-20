@@ -23,6 +23,19 @@ func GetEntryHandler(c echo.Context) error {
 	return c.JSON(http.StatusOK, entryDetails)
 }
 
+// Get 週間のbookmarkランキングを10件取得
+func GetHotEntryHandler(c echo.Context) error {
+	user, err := GetMe(c)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+	entryDetails, err := model.GetHotEntrys(c.Request().Context(), user.ID)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+	return c.JSON(http.StatusOK, entryDetails)
+}
+
 // PUT /entry ブックマークの追加・タグの更新・記事がなければ追加
 // TODO: urlから記事のタイトルや中身を取得する
 func PutEntryHandler(c echo.Context) error {

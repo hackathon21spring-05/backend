@@ -60,6 +60,46 @@ func GetEntryDetail(ctx context.Context, userId string, entryId string) (EntryDe
 	}, nil
 }
 
+// 週間記事ブックマーク件数が熱いやつを取得（10件）
+func GetHotEntrys(ctx context.Context, userId string) ([]EntryDetail, error) {
+	var entrys []Entry
+	query := "SELECT e.* , COUNT(b.entry_id) AS number FROM entrys e " +
+		"LEFT OUTER JOIN (SELECT * FROM bookmarks WHERE bookmarks.created_at > ?) b " +
+		"ON e.id=b.entry_id GROUP BY b.entry_id ORDER BY number DESC LIMIT 6"
+	t := time.Now()
+	t.AddDate(0, 0, -1)
+	t.Format("2006-01-02T15:04:05Z07:00")
+	err := db.SelectContext(ctx, &entrys, query, t.String())
+	if err != nil {
+		return []EntryDetail{}, fmt.Errorf("failed to get entry: %w", err)
+	}
+
+	// ここから完全にアウトじゃん
+	entryDetails := make([]EntryDetail, len(entrys))
+	for i, entry := range entrys {
+		var tags []string
+		err = db.SelectContext(ctx, &tags, "SELECT tag FROM tags WHERE entry_id=? ORDER BY tag", entry.ID)
+		if err != nil {
+			return []EntryDetail{}, fmt.Errorf("failed to get entry: %w", err)
+		}
+		var count int
+		err = db.GetContext(ctx, &count, "SELECT COUNT(*) FROM bookmarks WHERE user_id=? and entry_id=?", userId, entry.ID)
+		if err != nil {
+			return []EntryDetail{}, fmt.Errorf("failed to get entry: %w", err)
+		}
+		isBookmark := false
+		if count > 0 {
+			isBookmark = true
+		}
+		entryDetails[i] = EntryDetail{
+			Entry:      entry,
+			Tags:       tags,
+			IsBookmark: isBookmark,
+		}
+	}
+	return entryDetails, nil
+}
+
 // 新着記事を50件取得
 func GetNewEntrys(ctx context.Context, userId string) ([]EntryDetail, error) {
 	// 2N+1を後で解決する！！！！！！TODO
