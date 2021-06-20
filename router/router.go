@@ -22,7 +22,7 @@ func SetRouting(e *echo.Echo, sess sess.Session, cltID string, cltSecret string)
 	clientSecret = cltSecret
 
 	proxyConfig := middleware.DefaultProxyConfig
-	clientURL, err := url.Parse("https://hackathon21spring-05.trap.show/linq-frontend/")
+	clientURL, err := url.Parse("http://production.linq-frontend.hackathon21spring-05.trap.show/")
 	if err != nil {
 		panic(err)
 	}
@@ -36,7 +36,7 @@ func SetRouting(e *echo.Echo, sess sess.Session, cltID string, cltSecret string)
 		if strings.HasPrefix(c.Path(), "/api/") || strings.HasPrefix(c.Path(), "/openapi/") {
 			return true
 		}
-		c.Request().Host = "hackathon21spring-05.trap.show"
+		c.Request().Host = "production.linq-frontend.hackathon21spring-05.trap.show"
 		return false
 	}
 	proxyConfig.ModifyResponse = func(res *http.Response) error {
