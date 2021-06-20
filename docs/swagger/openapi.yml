@@ -297,6 +297,10 @@ components:
           description: サムネイルのURL
           type: string
           example: https://material.angular.io/assets/img/site-preview.png
+        count:
+          description: ブックマーク数
+          type: integer
+          example: 2
         created_at: 
           type: string
           format: date-time
