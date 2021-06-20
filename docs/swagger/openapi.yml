@@ -135,6 +135,22 @@ paths:
                 $ref: '#/components/schemas/EntryDetail'
         "500":
           description: サーバー内エラー
+  /hot:
+    get:
+      tags:
+        - entry
+      summary: 週間熱いやつの10個を追加
+      description: 週間熱いやつの10個を追加
+      operationId: getHotEntry
+      responses:
+        "200":
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EntryDetail'
+        "500":
+          description: サーバー内エラー
   /entry/{entryId}/tag/{tag}:
     post:
       tags:
