@@ -7,7 +7,7 @@ import (
 
 func SearchEntrys(ctx context.Context, tag string, userId string) ([]EntryDetail, error) {
 	query := "SELECT q.*, COUNT(b.entry_id) AS number FROM bookmarks b " +
-		"JOIN (SELECT entrys.* FROM entrys JOIN tags WHERE entrys.id = tags.entry_id AND (tags.tag IN (?)) GROUP BY entrys.id) q " +
+		"RIGHT OUTER JOIN (SELECT entrys.* FROM entrys JOIN tags WHERE entrys.id = tags.entry_id AND (tags.tag IN (?)) GROUP BY entrys.id) q " +
 		"ON b.entry_id=q.id GROUP BY b.entry_id"
 	var entrys []Entry
 	err := db.SelectContext(ctx, &entrys, query, tag)
