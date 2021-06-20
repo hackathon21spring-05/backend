@@ -6,7 +6,9 @@ import (
 )
 
 func SearchEntrys(ctx context.Context, tag string, userId string) ([]EntryDetail, error) {
-	query := "SELECT entrys.* FROM entrys, tags WHERE entrys.id = tags.entry_id AND (tags.tag IN (?)) GROUP BY entrys.Id ORDER BY created_at DESC"
+	query := "SELECT q.*, COUNT(b.entry_id) AS number FROM bookmarks b " +
+		"JOIN (SELECT entrys.* FROM entrys JOIN tags WHERE entrys.id = tags.entry_id AND (tags.tag IN (?)) GROUP BY entrys.id) q " +
+		"ON b.entry_id=q.id GROUP BY b.entry_id"
 	var entrys []Entry
 	err := db.SelectContext(ctx, &entrys, query, tag)
 	if err != nil {
@@ -29,15 +31,11 @@ func SearchEntrys(ctx context.Context, tag string, userId string) ([]EntryDetail
 		if count > 0 {
 			isBookmark = true
 		}
-		entryDetails[i].ID = entry.ID
-		entryDetails[i].Url = entry.Url
-		entryDetails[i].Title = entry.Title
-		entryDetails[i].Caption = entry.Caption
-		entryDetails[i].Thumbnail = entry.Thumbnail
-		entryDetails[i].CreatedAt = entry.CreatedAt
-
-		entryDetails[i].Tags = tags
-		entryDetails[i].IsBookmark = isBookmark
+		entryDetails[i] = EntryDetail{
+			Entry:      entry,
+			Tags:       tags,
+			IsBookmark: isBookmark,
+		}
 	}
 	return entryDetails, nil
 }
