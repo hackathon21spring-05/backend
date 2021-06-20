@@ -30,7 +30,7 @@ type EntryDetail struct {
 func GetEntryDetail(ctx context.Context, userId string, entryId string) (EntryDetail, error) {
 	// 記事の本体情報を取得
 	entry := Entry{}
-	err := db.GetContext(ctx, &entry, "SELECT entrys.* , COUNT(bookmarks.entry_id) AS number FROM entrys JOIN bookmarks ON entrys.id=bookmarks.entry_id WHERE entrys.id=? GROUP BY bookmarks.entry_id ", entryId)
+	err := db.GetContext(ctx, &entry, "SELECT entrys.* , COUNT(bookmarks.entry_id) AS number FROM entrys LEFT OUTER JOIN bookmarks ON entrys.id=bookmarks.entry_id WHERE entrys.id=? GROUP BY bookmarks.entry_id ", entryId)
 	if err != nil {
 		return EntryDetail{}, fmt.Errorf("failed to get entry: %w", err)
 	}
