@@ -310,6 +310,12 @@ components:
         isBookmark:
           type: boolean
           example: true
+      required:
+        - id
+        - url
+        - title
+        - count
+        - isBookmark
     User:
       description: ユーザー
       type: object
