@@ -148,7 +148,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/EntryDetail'
+                type: array
+                items:
+                  $ref: '#/components/schemas/EntryDetail'
         "500":
           description: サーバー内エラー
   /entry/{entryId}/tag/{tag}:
