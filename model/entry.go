@@ -16,6 +16,7 @@ type Entry struct {
 	Title     string    `db:"title" json:"title"`
 	Caption   string    `db:"caption" json:"caption"`
 	Thumbnail string    `db:"thumbnail" json:"thumbnail"`
+	Count     int       `db:"number" json:"count"`
 	CreatedAt time.Time `db:"created_at" json:"created_at"`
 }
 
@@ -30,7 +31,7 @@ type EntryDetail struct {
 func GetEntryDetail(ctx context.Context, userId string, entryId string) (EntryDetail, error) {
 	// 記事の本体情報を取得
 	entry := Entry{}
-	err := db.GetContext(ctx, &entry, "SELECT * FROM entrys WHERE id=?", entryId)
+	err := db.GetContext(ctx, &entry, "SELECT entrys.* , COUNT(bookmarks.entry_id) AS number FROM entrys JOIN bookmarks ON entrys.id=bookmarks.entry_id WHERE entrys.id=? GROUP BY bookmarks.entry_id ", entryId)
 	if err != nil {
 		return EntryDetail{}, fmt.Errorf("failed to get entry: %w", err)
 	}
@@ -64,7 +65,7 @@ func GetEntryDetail(ctx context.Context, userId string, entryId string) (EntryDe
 func GetNewEntrys(ctx context.Context, userId string) ([]EntryDetail, error) {
 	// 2N+1を後で解決する！！！！！！TODO
 	var entrys []Entry
-	err := db.SelectContext(ctx, &entrys, "SELECT * FROM entrys ORDER BY created_at DESC LIMIT 50")
+	err := db.SelectContext(ctx, &entrys, "SELECT entrys.* , COUNT(bookmarks.entry_id) AS number FROM entrys JOIN bookmarks ON entrys.id=bookmarks.entry_id GROUP BY bookmarks.entry_id ORDER BY entrys.created_at DESC LIMIT 50")
 	if err != nil {
 		return []EntryDetail{}, fmt.Errorf("failed to get entry: %w", err)
 	}
@@ -86,15 +87,11 @@ func GetNewEntrys(ctx context.Context, userId string) ([]EntryDetail, error) {
 		if count > 0 {
 			isBookmark = true
 		}
-		entryDetails[i].ID = entry.ID
-		entryDetails[i].Url = entry.Url
-		entryDetails[i].Title = entry.Title
-		entryDetails[i].Caption = entry.Caption
-		entryDetails[i].Thumbnail = entry.Thumbnail
-		entryDetails[i].CreatedAt = entry.CreatedAt
-
-		entryDetails[i].Tags = tags
-		entryDetails[i].IsBookmark = isBookmark
+		entryDetails[i] = EntryDetail{
+			Entry:      entry,
+			Tags:       tags,
+			IsBookmark: isBookmark,
+		}
 	}
 	return entryDetails, nil
 }
