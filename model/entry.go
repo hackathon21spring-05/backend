@@ -5,7 +5,6 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
-	"net/url"
 	"time"
 )
 
@@ -96,39 +95,13 @@ func GetNewEntrys(ctx context.Context, userId string) ([]EntryDetail, error) {
 	return entryDetails, nil
 }
 
-// AddEntry 記事が存在しなければ記事を追加する
-func AddEntry(ctx context.Context, entry *Entry) error {
-	// すでに追加されているか確認
-	// urlにuniqueが使えなかったので，とりあえずselect文で取ってくる方針にする
-	var count int
-	u, err := url.Parse(entry.Url)
-	if err != nil {
-		return fmt.Errorf("failed to parse url: %w", err)
-	}
-	removedUrl := u.Scheme + "://" + u.Host + u.Path
-	if u.RawQuery != "" {
-		removedUrl += "?" + u.RawQuery
-	}
-	entry.Url, err = url.QueryUnescape(removedUrl)
-	if err != nil {
-		return fmt.Errorf("failed to decode url: %w", err)
-	}
-	entryId := ToHash(entry.Url)
-	err = db.GetContext(ctx, &count, "SELECT COUNT(*) FROM entrys where id=?", entryId)
-	if err != nil {
-		return fmt.Errorf("failed to get entry: %w", err)
-	}
-	if count > 0 {
+// AddEntry 記事を追加する
+func AddEntry(ctx context.Context, entry Entry) error {
+	// 記事の追加
+	if entry.ID == "" {
 		return nil
 	}
-	// URLからデータをとってくる
-	entryData, err := getEntryContent(entry.Url)
-	if err != nil {
-		return fmt.Errorf("failed to get entry Data: %w", err)
-	}
-
-	// 記事の追加
-	_, err = db.Exec("INSERT INTO entrys (id, url, title, caption, thumbnail) VALUES (?, ?, ?, ?, ?)", entryId, entry.Url, entryData.Title, entryData.Caption, entryData.Thumbnail)
+	_, err := db.Exec("INSERT INTO entrys (id, url, title, caption, thumbnail) SELECT ?, ?, ?, ?, ? FROM dual WHERE NOT EXISTS (SELECT * FROM entrys WHERE id=?)", entry.ID, entry.Url, entry.Title, entry.Caption, entry.Thumbnail, entry.ID)
 	if err != nil {
 		return fmt.Errorf("failed to insert entry: %w", err)
 	}

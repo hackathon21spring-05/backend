@@ -1,4 +1,4 @@
-package model
+package router
 
 import (
 	"bytes"
@@ -8,6 +8,7 @@ import (
 	"net/url"
 
 	"github.com/PuerkitoBio/goquery"
+	"github.com/hackathon21spring-05/linq-backend/model"
 	"github.com/saintfish/chardet"
 	"golang.org/x/net/html/charset"
 )
@@ -16,13 +17,13 @@ var (
 	httpClient = http.DefaultClient
 )
 
-func getEntryContent(entryUrl string) (Entry, error) {
+func getEntryContent(entryUrl string) (model.Entry, error) {
 	u, err := url.Parse(entryUrl)
 	if err != nil {
-		return Entry{}, fmt.Errorf("failed to parse url: %w", err)
+		return model.Entry{}, fmt.Errorf("failed to parse url: %w", err)
 	}
 
-	var entry Entry
+	var entry model.Entry
 	switch u.Hostname() {
 	case "q.trap.jp":
 		// traQ message
@@ -35,24 +36,24 @@ func getEntryContent(entryUrl string) (Entry, error) {
 		entry, err = getWebContent(u)
 	}
 	if err != nil {
-		return Entry{}, fmt.Errorf("failed to get entryData from web: %w", err)
+		return model.Entry{}, fmt.Errorf("failed to get entryData from web: %w", err)
 	}
 	return entry, nil
 }
 
 // url上のデータを取ってくる
-func getWebContent(url *url.URL) (Entry, error) {
+func getWebContent(url *url.URL) (model.Entry, error) {
 	req, err := http.NewRequest("GET", url.String(), nil)
 	if err != nil {
-		return Entry{}, err
+		return model.Entry{}, err
 	}
 	res, err := httpClient.Do(req)
 	if err != nil {
-		return Entry{}, err
+		return model.Entry{}, err
 	}
 	defer res.Body.Close()
 	if res.StatusCode != 200 {
-		return Entry{}, fmt.Errorf("fail to get message: (Status: %d %s)", res.StatusCode, res.Status)
+		return model.Entry{}, fmt.Errorf("fail to get message: (Status: %d %s)", res.StatusCode, res.Status)
 	}
 
 	// 読み取り
@@ -85,9 +86,9 @@ func getWebContent(url *url.URL) (Entry, error) {
 	})
 
 	if title == "" {
-		return Entry{}, fmt.Errorf("fail to get title from url")
+		return model.Entry{}, fmt.Errorf("fail to get title from url")
 	}
-	return Entry{
+	return model.Entry{
 		Url:       url.String(),
 		Title:     title,
 		Caption:   caption,
@@ -96,10 +97,10 @@ func getWebContent(url *url.URL) (Entry, error) {
 }
 
 // TODO
-func getTraqMessage(url *url.URL) (Entry, error) {
-	return Entry{}, nil
+func getTraqMessage(url *url.URL) (model.Entry, error) {
+	return model.Entry{}, nil
 }
 
-func getTrapWikiContent(url *url.URL) (Entry, error) {
-	return Entry{}, nil
+func getTrapWikiContent(url *url.URL) (model.Entry, error) {
+	return model.Entry{}, nil
 }

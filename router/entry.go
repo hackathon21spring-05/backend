@@ -1,7 +1,9 @@
 package router
 
 import (
+	"fmt"
 	"net/http"
+	"net/url"
 
 	"github.com/hackathon21spring-05/linq-backend/model"
 	"github.com/labstack/echo/v4"
@@ -33,12 +35,39 @@ func PutEntryHandler(c echo.Context) error {
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
-	entryId := model.ToHash(req.Entry.Url)
 
-	// 記事がなければ追加
-	err = model.AddEntry(c.Request().Context(), req.Entry)
+	// URLパース
+	u, err := url.Parse(req.Entry.Url)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, fmt.Errorf("failed to parse url: %w", err).Error())
+	}
+	removedUrl := u.Scheme + "://" + u.Host + u.Path
+	if u.RawQuery != "" {
+		removedUrl += "?" + u.RawQuery
+	}
+	usableURL, err := url.QueryUnescape(removedUrl)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, fmt.Errorf("failed to decode url: %w", err).Error())
+	}
+	entryId := model.ToHash(usableURL)
+
+	// 記事の存在チェック
+	count, err := model.FindEntry(c.Request().Context(), entryId)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+	// 新規記事のとき
+	if count <= 0 {
+		entry, err := getEntryContent(usableURL)
+		if err != nil {
+			return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+		}
+		// 記事の追加
+		entry.ID = entryId
+		err = model.AddEntry(c.Request().Context(), entry)
+		if err != nil {
+			return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+		}
 	}
 
 	// タグの追加
