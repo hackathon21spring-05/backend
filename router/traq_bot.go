@@ -26,7 +26,7 @@ func PostTraqMessage(entry *model.Entry) error {
 	if entry.Title == "" {
 		return fmt.Errorf("Title not found")
 	}
-	message := fmt.Sprintf("### [%s](%s)\n### !![Add tags](%s?url=%s)!!",
+	message := fmt.Sprintf("### [%s](%s)\n#### !![Add tags](%s?url=%s)!!",
 		entry.Title,
 		entry.Url,
 		entryURL,
