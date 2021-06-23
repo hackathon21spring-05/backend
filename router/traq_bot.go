@@ -23,7 +23,7 @@ func calcHMACSHA1(message, secret string) string {
 }
 
 func PostTraqMessage(entry *model.Entry) error {
-	message := fmt.Sprintf("## Add Entry\n### [%s](%s)\n### !![Add tags](%s?url=%s)!!",
+	message := fmt.Sprintf("## New Entry\n### [%s](%s)\n### !![Add tags](%s?url=%s)!!",
 		entry.Title,
 		entry.Url,
 		entryURL,
