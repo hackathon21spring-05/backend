@@ -39,15 +39,18 @@ func main() {
 	e.Use(middleware.Recover())
 	e.Use(middleware.Logger())
 
-	clientID := os.Getenv("CLIENT_ID")
-	if len(clientID) == 0 {
-		panic(errors.New("ENV CLIENT_ID IS NULL"))
+	clientID := ""
+	clientSecret := ""
+	if os.Getenv("STAGING") != "development" {
+		clientID = os.Getenv("CLIENT_ID")
+		if len(clientID) == 0 {
+			panic(errors.New("ENV CLIENT_ID IS NULL"))
+		}
+		clientSecret = os.Getenv("CLIENT_SECRET")
+		if len(clientSecret) == 0 {
+			panic(errors.New("ENV CLIENT_SECRET IS NULL"))
+		}
 	}
-	clientSecret := os.Getenv("CLIENT_SECRET")
-	if len(clientSecret) == 0 {
-		panic(errors.New("ENV CLIENT_SECRET IS NULL"))
-	}
-
 	err = router.SetRouting(e, s, clientID, clientSecret)
 
 	e.Logger.Fatal(e.Start(":" + os.Getenv("PORT")))
