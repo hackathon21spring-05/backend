@@ -1,6 +1,7 @@
 # linQ
 
-linQ backend
+linQ backend  
+frontend: https://github.com/hackathon21spring-05/linq-frontend
 
 ## Develop environment
 
