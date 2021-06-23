@@ -81,6 +81,10 @@ func PutEntryHandler(c echo.Context) error {
 		if err != nil {
 			return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 		}
+		err = PostTraqMessage(&entry)
+		if err != nil {
+			// pass
+		}
 	}
 
 	// タグの追加
