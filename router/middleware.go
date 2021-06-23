@@ -16,7 +16,9 @@ func GetMe(c echo.Context) (*model.User, error) {
 	// OAuthのない開発環境では次の値をテストに用いる（後で消すと良いかも）
 	env := os.Getenv("ENV")
 	if env == "develop" {
-		return &model.User{ID: "060db77b-1d04-4686-a5ec-15c960159646", Name: "toshi00"}, nil
+		user := &model.User{ID: "060db77b-1d04-4686-a5ec-15c960159646", Name: "toshi00"}
+		model.CreateUser(c.Request().Context(), user)
+		return user, nil
 	}
 
 	sess, err := session.Get("sessions", c)
