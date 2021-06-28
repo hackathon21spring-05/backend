@@ -6,8 +6,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"path"
-	"strings"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/hackathon21spring-05/linq-backend/model"
@@ -146,13 +144,6 @@ func requestDocument(src string) (*goquery.Document, error) {
 		return nil, err
 	}
 	return doc, nil
-}
-
-func joinFileUrl(srcUrl *url.URL, fileUrl string) string {
-	if strings.HasPrefix(fileUrl, ".") {
-		return srcUrl.Scheme + "://" + srcUrl.Host + path.Join(srcUrl.Path, fileUrl)
-	}
-	return fileUrl
 }
 
 // TODO
