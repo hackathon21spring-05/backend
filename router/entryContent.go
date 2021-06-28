@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"strings"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/hackathon21spring-05/linq-backend/model"
@@ -60,6 +61,7 @@ func getWebContent(u *url.URL) (model.Entry, error) {
 		{name: "h1", process: "text"},
 	}
 	title := getSelectorData(doc, titleSelector)
+	title = strings.TrimSpace(title) // 前後の空白除去
 
 	// サムネイル取得
 	thumbnailSelector := []selector{
