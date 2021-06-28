@@ -6,7 +6,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"path"
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
@@ -62,6 +61,7 @@ func getWebContent(u *url.URL) (model.Entry, error) {
 		{name: "h1", process: "text"},
 	}
 	title := getSelectorData(doc, titleSelector)
+	title = strings.TrimSpace(title) // 前後の空白除去
 
 	// サムネイル取得
 	thumbnailSelector := []selector{
@@ -146,13 +146,6 @@ func requestDocument(src string) (*goquery.Document, error) {
 		return nil, err
 	}
 	return doc, nil
-}
-
-func joinFileUrl(srcUrl *url.URL, fileUrl string) string {
-	if strings.HasPrefix(fileUrl, ".") {
-		return srcUrl.Scheme + "://" + srcUrl.Host + path.Join(srcUrl.Path, fileUrl)
-	}
-	return fileUrl
 }
 
 // TODO
