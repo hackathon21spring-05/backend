@@ -63,11 +63,9 @@ func GetEntryDetail(ctx context.Context, userId string, entryId string) (EntryDe
 // 週間記事ブックマーク件数が熱いやつを取得（10件）
 func GetHotEntrys(ctx context.Context, userId string) ([]EntryDetail, error) {
 	var entrys []Entry
-	query := "SELECT entrys.* , COUNT(bookmarks.entry_id) AS number FROM entrys LEFT OUTER JOIN bookmarks ON entrys.id=bookmarks.entry_id GROUP BY bookmarks.entry_id ORDER BY number DESC LIMIT 6"
+	query := "SELECT entrys.* , COUNT(bookmarks.entry_id) AS number FROM entrys LEFT OUTER JOIN bookmarks ON entrys.id=bookmarks.entry_id GROUP BY bookmarks.entry_id ORDER BY SUM(CASE WHEN bookmarks.created_at > ? THEN 1 ELSE 0 END) DESC LIMIT 6"
 	t := time.Now()
-	t.AddDate(0, 0, -7)
-	t.Format("2006-01-02T15:04:05Z07:00")
-	err := db.SelectContext(ctx, &entrys, query)
+	err := db.SelectContext(ctx, &entrys, query, t.AddDate(0, 0, -7).Format("2006-01-02 15:04:05"))
 	if err != nil {
 		return []EntryDetail{}, fmt.Errorf("failed to get entry: %w", err)
 	}
