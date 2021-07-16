@@ -14,7 +14,8 @@ import (
 )
 
 // ここでやるの良くない気がするけどめんどい
-var entryURL, _ = url.Parse("https://linq.trap.games/entry")
+// HACK: // で始まる URL は OGP がでない
+var entryURL, _ = url.Parse("//linq.trap.games/entry")
 
 func calcHMACSHA1(message, secret string) string {
 	mac := hmac.New(sha1.New, []byte(secret))
@@ -26,7 +27,7 @@ func PostTraqMessage(entry *model.Entry) error {
 	if entry.Title == "" {
 		return fmt.Errorf("Title not found")
 	}
-	message := fmt.Sprintf("### [%s](%s)\n#### !![Add tags](%s?url=%s)!!",
+	message := fmt.Sprintf("### [%s](%s)\n#### [Add tags](%s?url=%s)",
 		entry.Title,
 		entry.Url,
 		entryURL,
