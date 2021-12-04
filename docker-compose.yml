@@ -5,6 +5,7 @@ services:
       context: .
       dockerfile: DockerFile
     restart: always
+    entrypoint: dockerize -timeout 60s -wait tcp://db:3306 air
     env_file: .env
     environment:
       MARIADB_USERNAME: user
